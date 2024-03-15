@@ -76,23 +76,14 @@ WSGI_APPLICATION = 'verato.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'ussers',  # Nombre de tu base de datos
-        'ENFORCE_SCHEMA': False,  # Opcional, si no quieres usar esquemas
-        'CLIENT': {
-            'host': 'atlascluster.h8adtel.mongodb.net',
-            'port': 27017,
-            'username': '123',
-            'password': '1234',
-            'authSource': 'admin',  # Base de datos de autenticación (puede ser diferente)
-            'authMechanism': 'SCRAM-SHA-1',
-            'ssl': True,
-            
-        }
-    }
-}
+#DATABASES = {
+ #   'default': {
+  #      'ENGINE': 'djongo',
+   #     'NAME': 'ussers',  # Nombre de tu base de datos
+    #    'HOST': 'atlascluster.h8adtel.mongodb.net',
+    #    'PORT': 27017,
+    #}
+#}
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 

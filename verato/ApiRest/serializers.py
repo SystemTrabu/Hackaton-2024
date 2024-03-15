@@ -1,7 +1,5 @@
-from rest_framework import serializer
-from .models import ussers
+from rest_framework import serializers
 
-class UssersSerializer(serializer.Modelserializer):
-    class Meta:
-        model=ussers
-        fields='__all__'
+
+class JSONFileSerializer(serializers.Serializer):
+    file = serializers.FileField()
