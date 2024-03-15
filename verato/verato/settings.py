@@ -80,8 +80,7 @@ DATABASES = {
         'NAME': 'ussers',
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': '189.176.237.105', #esto es modificable
-            'port': 32
+            'host': 'mongodb://admin:admin@ip:port/'
         }
     }
 }
