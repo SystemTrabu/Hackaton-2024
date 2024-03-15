@@ -17,12 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from ApiRest.views import JSONUploadView, TextUploadView
+from ApiRest.views import JSONUploadView
+from ApiRest.subirdatos import TextUploadView
+
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/upload/', JSONUploadView.as_view(), name='json_upload'),
-    path('up/', TextUploadView.as_view(), name='text_upload'),
+    path('api/up/', TextUploadView.as_view(), name='text_upload'),
 
 ]

@@ -4,5 +4,4 @@ from .views import JSONUploadView, TextUploadView
 
 urlpatterns = [
     path('upload/', JSONUploadView.as_view(), name='json_upload'),
-    path('up/', TextUploadView.as_view(), name='text_upload'),
 ]
