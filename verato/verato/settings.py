@@ -76,8 +76,13 @@ WSGI_APPLICATION = 'verato.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'ussers',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': '189.176.237.105', #esto es modificable
+            'port': 32
+        }
     }
 }
 
