@@ -12,7 +12,7 @@ class ussers(models.Model):
     Alias_1=models.CharField(max_length=50)
     Alias_2=models.CharField(max_length=50) 
     Alias_3=models.CharField(max_length=50)
-    DateOfBirth=models.DateField(input_formats=[r'%Y-%m-%d'])
+    DateOfBirth=models.DateField
     SSN=models.DateField(max_length=9)
     Address1Line1=models.CharField(max_length=50)
     Address1Line2 = models.CharField(max_length=255, blank=True, null=True)

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import ssl
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,15 +79,20 @@ WSGI_APPLICATION = 'verato.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'ussers',
-        'ENFORCE_SCHEMA': False,
+        'NAME': 'ussers',  # Nombre de tu base de datos
+        'ENFORCE_SCHEMA': False,  # Opcional, si no quieres usar esquemas
         'CLIENT': {
-            'host': 'mongodb://admin:admin@187.171.168.12:port/'
+            'host': 'atlascluster.h8adtel.mongodb.net',
+            'port': 27017,
+            'username': '123',
+            'password': '1234',
+            'authSource': 'admin',  # Base de datos de autenticación (puede ser diferente)
+            'authMechanism': 'SCRAM-SHA-1',
+            'ssl': True,
+            
         }
     }
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
