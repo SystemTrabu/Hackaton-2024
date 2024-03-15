@@ -16,9 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from ApiRest.views import JSONChangeConfig
+from ApiRest.views import JSONUploadView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-   path('api/', include('ApiRest.urls')),
+    path('api/upload/', JSONUploadView.as_view(), name='json_upload'),
+    path('api/change_config/', JSONChangeConfig.as_view(), name='json_change_config'),
 ]
