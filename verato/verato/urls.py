@@ -12,13 +12,17 @@ Class-based views
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls')
 """
 from django.contrib import admin
 from django.urls import path, include
 
+from ApiRest.views import JSONUploadView, TextUploadView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-   path('api/', include('ApiRest.urls')),
+    path('api/upload/', JSONUploadView.as_view(), name='json_upload'),
+    path('up/', TextUploadView.as_view(), name='text_upload'),
+
 ]
