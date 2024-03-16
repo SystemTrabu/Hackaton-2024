@@ -38,10 +38,22 @@ class TextUploadView(APIView):
         if not uploaded_file:
             return Response({'error': 'No se ha proporcionado ningún archivo'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            global global_text_data
-            # Lee el contenido del archivo de texto
+            registros = []
+            registro_nuevo = ""
             text = uploaded_file.read().decode('utf-8')
-            global_text_data=text.rstrip()
+            global_text_data = text.rstrip()
+
+            for line in text.split('\n'):
+                line = line.strip()
+                if 'SEED' in line:
+                    # Si hay un registro acumulado, agrégalo a la lista de registros
+                    if registro_nuevo:
+                        registros.append(registro_nuevo)
+                    # Comenzar un nuevo registro
+                    registro_nuevo = ""
+                registro_nuevo += line + "\n"
+            
+            print(len(registros)+1)
             # Aquí puedes realizar cualquier operación con los datos de texto
             
             
@@ -58,6 +70,7 @@ class Generate(APIView):
         global global_porcentajetype
         global global_types_low_match
         global global_porcentajelow
+        
         
         # Verificar si global_json_data no es nulo y si contiene la clave "cases"
         if global_json_data and 'cases' in global_json_data:
@@ -97,7 +110,7 @@ class Generate(APIView):
                     global_types_low_match= low
                     print(global_types)  # Mostrar global_types en la consola
                       # Salir del bucle una vez que se haya encontrado el caso "LOW_MATCH"
-        Family.run()
+       # Family.run()
         Low_match.run()
         return Response({'message': 'Subcasos de FAMILY y sus distribuciones', 'data': family_distributions}, status=status.HTTP_200_OK)
 
@@ -357,7 +370,7 @@ class Low_match():
             if type == 'NOMATCH_SSN':
                 Low_match_structure [1] = str(fake.prefix()) if random.choice([True,False]) else ''
                 Low_match_structure [2] = fake.first_name()
-                Low_match_structure [3] = fake.file_name()
+                Low_match_structure [3] = fake.first_name()
                 Low_match_structure [4] = fake.last_name()
                 Low_match_structure [5] = fake.suffix()  if random.choice([True,False]) else ''
                 Low_match_structure [11] = fake.street_address()
@@ -380,7 +393,7 @@ class Low_match():
             if type == 'NOMATCH_DOB_ZIP':
                 Low_match_structure [1] = fake.prefix() if random.choice([True,False]) else ''
                 Low_match_structure [2] = fake.first_name()
-                Low_match_structure [3] = fake.file_name()
+                Low_match_structure [3] = fake.first_name()
                 Low_match_structure [4] = fake.last_name()
                 Low_match_structure [5] = fake.suffix() if random.choice([True,False]) else ''
                 Low_match_structure [10] = fake.ssn()
