@@ -14,7 +14,8 @@ global_json_data=None
 global_types=None
 global_count=None
 global_porcentajetype=None
-globa_types_simi=None
+global_porcentajetypeSimi=None
+global_types_simi=None
 class JSONUploadView(APIView):
     def post(self, request, *args, **kwargs):
         uploaded_file = request.FILES.get('json_file')
@@ -55,7 +56,6 @@ class Generate(APIView):
         global global_types
         global global_count
         global global_porcentajetype
-        global globa_types_simi
         
         # Verificar si global_json_data no es nulo y si contiene la clave "cases"
         if global_json_data and 'cases' in global_json_data:
@@ -80,21 +80,6 @@ class Generate(APIView):
                     global_types = family_distributions
                     print(global_types)  # Mostrar global_types en la consola
                     break  # Salir del bucle una vez que se haya encontrado el caso "FAMILY"
-                elif  case['case_id'] == 'SIMILAR':
-                    global_porcentajetype=case['distribution']
-                    
-                    # Inicializar un diccionario para almacenar los subcasos y sus distribuciones
-                    family_distributions = {}
-                    
-                    # Iterar sobre los subcasos en el caso "FAMILY"
-                    for sub_case in case['sub_cases']:
-                        # Guardar el subcaso y su distribución en el diccionario
-                        family_distributions[sub_case['case_id']] = sub_case['distribution']
-                    
-                    # Asignar el diccionario a global_types
-                    global_types = family_distributions
-                    print(global_types)  # Mostrar global_types en la consola
-                    break  # Salir del bucle una vez que se haya encontrado el caso "
         
         Family.run()
         return Response({'message': 'Subcasos de FAMILY y sus distribuciones', 'data': family_distributions}, status=status.HTTP_200_OK)
@@ -234,6 +219,11 @@ class Family:
             family_structures = Family.generate_family_structures(0, percentages)
         
 
+
+
+class Low_match():
+    structure = 'ID|Prefix|FirstName|MiddleName|LastName|Suffix|Name Alias-1|Name Alias-2|Name Alias-3|DOB|SSN|Address-1 Line 1|Address-1 Line 2|Address-1 City|Address-1 State|Address-1 Zip|Address-1 Zip4|Address-2 Line 1|Address-2 Line 2|Address-2 City|Address-2 State|Address-2 Zip|Address-2 Zip4|Phone-1 Area Code|Phone-1 Base Number|Phone-2 Area Code|Phone-2 Base Number|Gender|SimilarityScore|CASE Type'
+
 class similares:
     @staticmethod
     def generate_similares_estructure(count, percentages):
@@ -350,5 +340,45 @@ class similares:
 
         return family_change
 
+    def select_structure_type(percentages):
+        rand_num = random.uniform(0, 100)
+        cumulative_prob = 0
 
-similares.generate_similares_estructure(1,2)
+        for type, percentage in percentages.items():
+            cumulative_prob += percentage
+            if rand_num <= cumulative_prob:
+                return type
+
+    def run():
+        global global_types_simi
+        global global_count
+        global global_porcentajetypeSimi
+        # Parámetros para la cantidad de estructuras a generar
+        
+
+        # Porcentajes de cada tipo de estructura
+        if global_types_simi is not None:
+            percentages = global_types_simi
+            for key in percentages:
+                percentages[key]*=100
+
+        # Seleccionar y mostrar las estructuras
+        if global_count is not None:
+            print(global_count, 'ola')
+            print(global_porcentajetype, 'ola')
+            print(percentages)
+
+            family_count=int(global_count*global_porcentajetypeSimi)
+            # for key in percentages:
+            #     percentages[key]*=100
+            print(percentages, 'new')
+            print(family_count)
+            family_structures = similares.generate_similares_estructure(family_count, percentages)
+
+            for family in family_structures:
+                print (family)
+                
+            
+            
+        else:
+            family_structures = Family.generate_family_structures(0, percentages)
