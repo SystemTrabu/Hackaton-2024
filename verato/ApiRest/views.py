@@ -16,6 +16,7 @@ global_count=None
 global_porcentajetype=None
 global_porcentajetypeSimi=None
 global_types_simi=None
+global_total_data=[]
 class JSONUploadView(APIView):
     def post(self, request, *args, **kwargs):
         uploaded_file = request.FILES.get('json_file')
@@ -89,7 +90,7 @@ class Generate(APIView):
                         similar_distributions[sub_case['case_id']]=sub_case['distribution']
                     global_types_simi=similar_distributions
                     
-                    
+        print('ola')     
         Family.run()
         similares.run()
         return Response({'message': 'Subcasos de FAMILY y sus distribuciones', 'data': family_distributions}, status=status.HTTP_200_OK)
@@ -109,9 +110,13 @@ class Family:
         family_change = []
         global global_text_data
 
-        for _ in range(count):
+        for x in range(count):
             family_structure = global_text_data.split('|')  # Divide la semilla en partes
             type = Family.select_structure_type(percentages)
+            global global_total_data
+            if x<1:
+                global_total_data.append(global_text_data.split('|'))
+
             if type == 'TWINS':
                 genero = fake.random_element(['M', 'F'])
                 
@@ -178,7 +183,9 @@ class Family:
 
                 family_structure[31] = 'familary-siblings'
 
-            family_change.append('|'.join(family_structure))
+            family_change.append('|'.join(family_structure))      
+            global_total_data.append(family_change)
+            
 
         return family_change
 
@@ -240,28 +247,44 @@ class similares:
         fake = Faker()
         family_change = []
         global global_text_data
-        datos=""
+        
 
-        for _ in range(count):
+        for x in range(count):
+            global global_total_data
             family_structure = global_text_data.split('|')  # Divide la semilla en partes
+            if x<1 :
+                global_total_data=global_text_data.split('|')
+
             type = similares.select_structure_type(percentages)
             if type == 'SAME':
                 print(global_text_data)
+                family_structure[31]='Same'
+                print('ola')
 
             if type == 'TYPO':
                 r = random.randint(1, 5)
+                family_structure[31]='Typo'
                 if(r==1):
-                    dato=family_structure[3]
+                    firtsname=family_structure[3]
+                    family_structure[3]=family_structure[3] +firtsname[1]
                 elif(r==2):
-                    dato=family_structure[8]    
+                    alias2=family_structure[8] 
+                    family_structure[8]=family_structure[3] + alias2[1]
                 elif(r==3):
-                    dato=family_structure[5]
+                    lastname=family_structure[5]
+                    family_structure[5]=family_structure[5]+lastname[1]
                 elif(r==4):
-                    dato=family_structure[11]
+                    SSN=family_structure[11]
+                    SSN[:-1]
+                    family_structure[11]=SSN[:-1]+ str(random.randint(1,9))
                 else:
                     dato=family_structure[25]
+                    dato[:-1]
+                    family_structure[25]=dato+str(random.randint(1,9))
+
+
                 numberR = random.randint(1,4)
-                
+                nombre=family_structure[3]
                 if (numberR==1):
                     def introduce_typo(word, typo_probability=1):
                         if random.random() < typo_probability:
@@ -272,18 +295,19 @@ class similares:
                             if word[index] in vowels:
                                 new_vowel = random.choice(vowels.replace(word[index], ""))  # Excluye la vocal original
                                 new_word = word[:index] + new_vowel + word[index + 1:]
-                                return new_word
+                                family_structure[3]=new_word
+                                family_structure[31]='Typo'
                             else:
                                 # Si no es una vocal, reemplaza la letra por otra aleatoria
                                 new_letter = chr(random.randint(97, 122))  # Genera una letra minúscula aleatoria
                                 new_word = word[:index] + new_letter + word[index + 1:]
-                                return new_word
-                        return word
+                                family_structure[3]=new_word
+                                family_structure[31]='Typo'
+                        
                     original_word = dato
                     # Introduce un error de dedo
                     typo_word = introduce_typo(original_word)
-                    print("Palabra original:", original_word)
-                    print("Palabra con error de dedo:", typo_word)
+                    
                 elif (numberR==2):
                     def introduce_typo(word, typo_probability=1):
                         if random.random() < typo_probability:
@@ -293,15 +317,12 @@ class similares:
                             letter_to_copy = word[position]
                             # Crea la nueva palabra agregando la letra en una posición aleatoria
                             new_word = word[:position] + letter_to_copy + word[position:]
-                            return new_word
-                        return word
+                            family_structure[3]=new_word
+                            family_structure[31]='Typo'
+                        
 
-                    # Palabra original
-                    original_word = dato
-                    # Introduce un error de dedo
+                    original_word = nombre
                     typo_word = introduce_typo(original_word)
-                    print("Palabra original:", original_word)
-                    print("Palabra con error de dedo:", typo_word)
                 elif(numberR==3):
                     def introduce_typo(word, typo_probability=1):
                         if random.random() < typo_probability:
@@ -311,15 +332,16 @@ class similares:
                             random_number = str(random.randint(0, 9))
                             # Inserta el número aleatorio en la posición elegida
                             new_word = word[:position] + random_number + word[position:]
-                            return new_word
-                        return word
+                            family_structure[3]=new_word
+                            family_structure[31]='Typo'
+                       
 
                     # Palabra original
-                    original_word = dato
+                    original_word = nombre
                     # Introduce un error de dedo
                     typo_word = introduce_typo(original_word)
-                    print("Palabra original:", original_word)
-                    print("Palabra con error de dedo:", typo_word)
+                    
+                    
                 else:
                     def replace_letter_with_number(word):
                         if not word:
@@ -330,14 +352,15 @@ class similares:
                         random_digit = random.randint(0, 9)
                         # Reemplaza la letra en la posición aleatoria por el dígito aleatorio
                         word_with_number = word[:random_index] + str(random_digit) + word[random_index + 1:]
-                        return word_with_number
+                        family_structure[3]=word_with_number
 
                     # Ejemplo de uso
-                    word = dato
+                    word = nombre
                     word_with_number = replace_letter_with_number(word)
-                    print("Palabra original:", word)
-                    print("Palabra con letra reemplazada por numero:", word_with_number)
-                    family_change.append('|'.join(family_structure))
+                    family_structure[31]='Typo'
+            family_change.append('|'.join(family_structure))
+            global_total_data.append(family_change)
+            
 
         return family_change
 
@@ -354,6 +377,10 @@ class similares:
         global global_types_simi
         global global_count
         global global_porcentajetypeSimi
+
+        #este es de prueba
+        global global_total_data
+        print('Aqui inicia el global',global_total_data)
         # Parámetros para la cantidad de estructuras a generar
         
 
@@ -377,9 +404,6 @@ class similares:
             family_structures = similares.generate_similares_estructure(family_count, percentages)
 
             for family in family_structures:
-                print (family)
-                
-            
-            
+                print (family) 
         else:
             family_structures = similares.generate_family_structures(0, percentages)
