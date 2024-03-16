@@ -253,11 +253,15 @@ class Family:
                     family_structure[27] = 'M'
 
                 family_structure[29] = 'familary-siblings'
-
+                family_structure[10]= fake.ssn()
+                
+                if(random.randint(1,5)==3):
+                    family_structure[9]=fake.date_of_birth(minimun_age=18,maximun_age=90).strftime('%Y-%m-%d')
             family_change.append('|'.join(family_structure))
         
         return family_change
 
+  
     # Función para seleccionar el tipo de estructura según los porcentajes
     @staticmethod
     def select_structure_type(percentages):
@@ -326,6 +330,7 @@ class Low_match():
         Low_match_change = []
         global global_text_data
         global global_total_data
+
         for x in range(count):
             Low_match_structure = global_text_data.split('|')
             seed=Low_match_change
@@ -434,8 +439,9 @@ class Low_match():
                 Low_match_structure [26] = str(fake.random_number(7))
                 Low_match_structure [27] = fake.random_element(['F', 'M'])
                 Low_match_structure [29] = 'NOMATCH_DOB_ZIP'
-                
-       
+    
+                # similares.similitudes(global_text_data,Low_match_structure)
+
             Low_match_change.append('|'.join(Low_match_structure))
         
         return Low_match_change
@@ -646,6 +652,30 @@ class similares:
             global_total_data.append("\n")
         else:
             family_structures = similares.generate_family_structures(0, percentages)
+    # def similitudes(similar_structure, arco_structure):
+    #     ndatos = len(similar_structure) - 2
+    #     for i in range (ndatos):
+    #         if(similar_structure[i]==''):
+    #             similar_structure[i]="0"
+    #         if(arco_structure[i]==''):
+    #             arco_structure[i]="0"
+                    
+    #         seeds = [(similar_structure[i], arco_structure[i])]
+
+    #                     # Calculamos las metricas de distancia pasando cada tupla como argumentos a levdist() y get_jaro_distance()
+    #         for x,y in (seeds):
+    #             print(f"'{x}' vs '{y}':")
+    #             print("Distancia Levenshtein ->", edit_distance(x,y))
+    #             print("Similitud Jaro Winkler ->",jwdist.get_jaro_distance(x,y))
+    #             print("-"*40)
+    #             similitud=jwdist.get_jaro_distance(x,y)
+    #             print("la similitud es ",similitud)
+    #             total += similitud
+    #     print("pasada ",i+1)
+    #     total=total/28
+    #     print(total)
+    #     return total
+
 
 
 
@@ -669,4 +699,3 @@ class createtxt(APIView):
             return FileResponse(open(file_path, 'rb'), as_attachment=True, filename='results.txt')
         except Exception as e:
             return Response({'error': str(e)})
-        
