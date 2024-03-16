@@ -20,6 +20,7 @@ from django.urls import path, include
 from ApiRest.views import JSONUploadView
 from ApiRest.views import TextUploadView
 from ApiRest.views import Generate
+from ApiRest.views import createtxt
 
 
 
@@ -28,4 +29,5 @@ urlpatterns = [
     path('api/upload/', JSONUploadView.as_view(), name='json_upload'),
     path('api/up/', TextUploadView.as_view(), name='text_upload'),
     path('api/generate/', Generate.as_view(), name='generate'),
+    path('api/download/',createtxt.as_view(), name='txt'),
 ]
