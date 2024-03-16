@@ -32,11 +32,26 @@ class TextUploadView(APIView):
             # Lee el contenido del archivo de texto
             text_data = uploaded_file.read().decode('utf-8')
             global_text_data= text_data
+            
             print(text_data)
-            # Aquí puedes utilizar global_json_data
-            if global_json_data:
-                print(global_json_data, 'holaa')
             # Aquí puedes realizar cualquier operación con los datos de texto
+            generate.print()
             return Response({'message': 'Archivo TXT subido exitosamente', 'data': text_data}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': 'Error al procesar el archivo de texto: {}'.format(str(e))}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class generate(APIView):
+    def print():
+        global global_json_data
+        distributions_porcentaje=[]
+        if global_json_data and 'cases' in global_json_data:
+            for case in global_json_data['cases']:
+                if 'distribution' in case:
+                    distribution = case['distribution']
+                    distributions_porcentaje.append(distribution*100)
+                    print("Distribution:", distribution)
+            else:
+                print("Distribution no encontrada en el objeto JSON")
+        
+        print(distributions_porcentaje, 'jejeje')
