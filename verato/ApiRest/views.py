@@ -14,6 +14,7 @@ global_json_data=None
 global_types=None
 global_count=None
 global_porcentajetype=None
+globa_types_simi=None
 class JSONUploadView(APIView):
     def post(self, request, *args, **kwargs):
         uploaded_file = request.FILES.get('json_file')
@@ -54,6 +55,7 @@ class Generate(APIView):
         global global_types
         global global_count
         global global_porcentajetype
+        global globa_types_simi
         
         # Verificar si global_json_data no es nulo y si contiene la clave "cases"
         if global_json_data and 'cases' in global_json_data:
@@ -78,6 +80,21 @@ class Generate(APIView):
                     global_types = family_distributions
                     print(global_types)  # Mostrar global_types en la consola
                     break  # Salir del bucle una vez que se haya encontrado el caso "FAMILY"
+                elif  case['case_id'] == 'SIMILAR':
+                    global_porcentajetype=case['distribution']
+                    
+                    # Inicializar un diccionario para almacenar los subcasos y sus distribuciones
+                    family_distributions = {}
+                    
+                    # Iterar sobre los subcasos en el caso "FAMILY"
+                    for sub_case in case['sub_cases']:
+                        # Guardar el subcaso y su distribución en el diccionario
+                        family_distributions[sub_case['case_id']] = sub_case['distribution']
+                    
+                    # Asignar el diccionario a global_types
+                    global_types = family_distributions
+                    print(global_types)  # Mostrar global_types en la consola
+                    break  # Salir del bucle una vez que se haya encontrado el caso "
         
         Family.run()
         return Response({'message': 'Subcasos de FAMILY y sus distribuciones', 'data': family_distributions}, status=status.HTTP_200_OK)
@@ -137,7 +154,7 @@ class Family:
                 if family_structure[6] == 'Jr':
                     numero = random.randint(0, 5)
                     if numero == 3:
-                        family_structure[2] = 'Sr'
+                        family_structure[6] = 'Sr'
                         fecha_nacimiento_original = datetime.datetime.strptime(family_structure[10], "%Y-%m-%d")
                         nueva_fecha_nacimiento = fecha_nacimiento_original + datetime.timedelta(days=20*365)
                         nueva_fecha_nacimiento_str = nueva_fecha_nacimiento.strftime("%Y-%m-%d")
@@ -146,7 +163,7 @@ class Family:
                 if family_structure[6] == 'Sr':
                     numero = random.randint(0, 5)
                     if numero == 3:
-                        family_structure[2] = 'Jr'
+                        family_structure[6] = 'Jr'
                         fecha_nacimiento_original = datetime.datetime.strptime(family_structure[10], "%Y-%m-%d")
                         nueva_fecha_nacimiento = fecha_nacimiento_original - datetime.timedelta(days=20*365)
                         nueva_fecha_nacimiento_str = nueva_fecha_nacimiento.strftime("%Y-%m-%d")
@@ -222,5 +239,116 @@ class similares:
     def generate_similares_estructure(count, percentages):
         fake = Faker()
         family_change = []
+        global global_text_data
+
+        for _ in range(count):
+            family_structure = global_text_data.split('|')  # Divide la semilla en partes
+            type = Family.select_structure_type(percentages)
+            if type == 'SAME':
+                print(global_text_data)
+
+            if type == 'TYPO':
+                r = random.randint(2, 17)
+                column_names = {
+                    2: 'prefix',
+                    3: 'first_name',
+                    4: 'last_name',
+                    5: 'suffix',
+                    6: 'name',
+                    7: 'gender',
+                    8: 'date_of_birth',  # Corregir el nombre de la columna
+                    9: 'ssn',
+                    10: 'street_address',  # Corregir el nombre de la columna
+                    11: 'city',
+                    12: 'state_abbr',  # Corregir el nombre de la columna
+                    13: 'zipcode',
+                    14: 'random_int',  # Corregir el nombre de la columna
+                    15: 'phone_number',  # Corregir el nombre de la columna
+                    16: 'random_number',  # Corregir el nombre de la columna
+                    17: 'random_element'  # Corregir el nombre de la columna
+                }
+                variable=column_names[r]
+                print (variable)
+                family_structure[r] = fake.variable()
+                numberR = random.randint(1,4)
+                if (numberR==1):
+                    def introduce_typo(word, typo_probability=1):
+                        if random.random() < typo_probability:
+                            # Selecciona una posición aleatoria en la palabra
+                            index = random.randint(0, len(word) - 1)
+                            # Si la letra en la posición seleccionada es una vocal, reemplázala por otra vocal aleatoria
+                            vowels = "aeiou"
+                            if word[index] in vowels:
+                                new_vowel = random.choice(vowels.replace(word[index], ""))  # Excluye la vocal original
+                                new_word = word[:index] + new_vowel + word[index + 1:]
+                                return new_word
+                            else:
+                                # Si no es una vocal, reemplaza la letra por otra aleatoria
+                                new_letter = chr(random.randint(97, 122))  # Genera una letra minúscula aleatoria
+                                new_word = word[:index] + new_letter + word[index + 1:]
+                                return new_word
+                        return word
+                    original_word = "house"
+                    # Introduce un error de dedo
+                    typo_word = introduce_typo(original_word)
+                    print("Palabra original:", original_word)
+                    print("Palabra con error de dedo:", typo_word)
+                elif (numberR==2):
+                    def introduce_typo(word, typo_probability=1):
+                        if random.random() < typo_probability:
+                            # Elige una posición aleatoria en la palabra
+                            position = random.randint(0, len(word) - 1)
+                            # Obtiene la letra en la posición elegida
+                            letter_to_copy = word[position]
+                            # Crea la nueva palabra agregando la letra en una posición aleatoria
+                            new_word = word[:position] + letter_to_copy + word[position:]
+                            return new_word
+                        return word
+
+                    # Palabra original
+                    original_word = "hola"
+                    # Introduce un error de dedo
+                    typo_word = introduce_typo(original_word)
+                    print("Palabra original:", original_word)
+                    print("Palabra con error de dedo:", typo_word)
+                elif(numberR==3):
+                    def introduce_typo(word, typo_probability=1):
+                        if random.random() < typo_probability:
+                            # Elige una posición aleatoria en la palabra
+                            position = random.randint(0, len(word))
+                            # Genera un número aleatorio
+                            random_number = str(random.randint(0, 9))
+                            # Inserta el número aleatorio en la posición elegida
+                            new_word = word[:position] + random_number + word[position:]
+                            return new_word
+                        return word
+
+                    # Palabra original
+                    original_word = "hola"
+                    # Introduce un error de dedo
+                    typo_word = introduce_typo(original_word)
+                    print("Palabra original:", original_word)
+                    print("Palabra con error de dedo:", typo_word)
+                else:
+                    def replace_letter_with_number(word):
+                        if not word:
+                            return word
+                        # Selecciona una posición aleatoria en la palabra
+                        random_index = random.randint(0, len(word) - 1)
+                        # Genera un dígito aleatorio entre 0 y 9
+                        random_digit = random.randint(0, 9)
+                        # Reemplaza la letra en la posición aleatoria por el dígito aleatorio
+                        word_with_number = word[:random_index] + str(random_digit) + word[random_index + 1:]
+                        return word_with_number
+
+                    # Ejemplo de uso
+                    word = "hello"
+                    word_with_number = replace_letter_with_number(word)
+                    print("Palabra original:", word)
+                    print("Palabra con letra reemplazada por numero:", word_with_number)
+                    family_change.append('|'.join(family_structure))
+
+        return family_change
 
 
+similares.generate_similares_estructure(1,2)
