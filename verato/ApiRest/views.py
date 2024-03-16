@@ -56,7 +56,8 @@ class Generate(APIView):
         global global_types
         global global_count
         global global_porcentajetype
-        
+        global global_porcentajetypeSimi
+        global global_types_simi
         # Verificar si global_json_data no es nulo y si contiene la clave "cases"
         if global_json_data and 'cases' in global_json_data:
             global_count = global_json_data['records_per_arc']
@@ -79,9 +80,18 @@ class Generate(APIView):
                     # Asignar el diccionario a global_types
                     global_types = family_distributions
                     print(global_types)  # Mostrar global_types en la consola
-                    break  # Salir del bucle una vez que se haya encontrado el caso "FAMILY"
-        
+                      # Salir del bucle una vez que se haya encontrado el caso "FAMILY"
+                
+                if case['case_id']=='SIMILAR':
+                    global_porcentajetypeSimi=case['distribution']
+                    similar_distributions={}
+                    for sub_case in case['sub_cases']:
+                        similar_distributions[sub_case['case_id']]=sub_case['distribution']
+                    global_types_simi=similar_distributions
+                    
+                    
         Family.run()
+        similares.run()
         return Response({'message': 'Subcasos de FAMILY y sus distribuciones', 'data': family_distributions}, status=status.HTTP_200_OK)
 
 
@@ -230,37 +240,28 @@ class similares:
         fake = Faker()
         family_change = []
         global global_text_data
+        datos=""
 
         for _ in range(count):
             family_structure = global_text_data.split('|')  # Divide la semilla en partes
-            type = Family.select_structure_type(percentages)
+            type = similares.select_structure_type(percentages)
             if type == 'SAME':
                 print(global_text_data)
 
             if type == 'TYPO':
-                r = random.randint(2, 17)
-                column_names = {
-                    2: 'prefix',
-                    3: 'first_name',
-                    4: 'last_name',
-                    5: 'suffix',
-                    6: 'name',
-                    7: 'gender',
-                    8: 'date_of_birth',  # Corregir el nombre de la columna
-                    9: 'ssn',
-                    10: 'street_address',  # Corregir el nombre de la columna
-                    11: 'city',
-                    12: 'state_abbr',  # Corregir el nombre de la columna
-                    13: 'zipcode',
-                    14: 'random_int',  # Corregir el nombre de la columna
-                    15: 'phone_number',  # Corregir el nombre de la columna
-                    16: 'random_number',  # Corregir el nombre de la columna
-                    17: 'random_element'  # Corregir el nombre de la columna
-                }
-                variable=column_names[r]
-                print (variable)
-                family_structure[r] = fake.variable()
+                r = random.randint(1, 5)
+                if(r==1):
+                    dato=family_structure[3]
+                elif(r==2):
+                    dato=family_structure[8]    
+                elif(r==3):
+                    dato=family_structure[5]
+                elif(r==4):
+                    dato=family_structure[11]
+                else:
+                    dato=family_structure[25]
                 numberR = random.randint(1,4)
+                
                 if (numberR==1):
                     def introduce_typo(word, typo_probability=1):
                         if random.random() < typo_probability:
@@ -278,7 +279,7 @@ class similares:
                                 new_word = word[:index] + new_letter + word[index + 1:]
                                 return new_word
                         return word
-                    original_word = "house"
+                    original_word = dato
                     # Introduce un error de dedo
                     typo_word = introduce_typo(original_word)
                     print("Palabra original:", original_word)
@@ -296,7 +297,7 @@ class similares:
                         return word
 
                     # Palabra original
-                    original_word = "hola"
+                    original_word = dato
                     # Introduce un error de dedo
                     typo_word = introduce_typo(original_word)
                     print("Palabra original:", original_word)
@@ -314,7 +315,7 @@ class similares:
                         return word
 
                     # Palabra original
-                    original_word = "hola"
+                    original_word = dato
                     # Introduce un error de dedo
                     typo_word = introduce_typo(original_word)
                     print("Palabra original:", original_word)
@@ -332,7 +333,7 @@ class similares:
                         return word_with_number
 
                     # Ejemplo de uso
-                    word = "hello"
+                    word = dato
                     word_with_number = replace_letter_with_number(word)
                     print("Palabra original:", word)
                     print("Palabra con letra reemplazada por numero:", word_with_number)
@@ -365,7 +366,7 @@ class similares:
         # Seleccionar y mostrar las estructuras
         if global_count is not None:
             print(global_count, 'ola')
-            print(global_porcentajetype, 'ola')
+            print(global_porcentajetypeSimi, 'ola')
             print(percentages)
 
             family_count=int(global_count*global_porcentajetypeSimi)
@@ -381,4 +382,4 @@ class similares:
             
             
         else:
-            family_structures = Family.generate_family_structures(0, percentages)
+            family_structures = similares.generate_family_structures(0, percentages)
