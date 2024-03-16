@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from ApiRest.views import JSONUploadView
-from ApiRest.subirdatos import TextUploadView
+from ApiRest.views import TextUploadView
 
 
 
