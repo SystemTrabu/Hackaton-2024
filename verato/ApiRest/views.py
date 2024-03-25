@@ -1,4 +1,6 @@
 import os
+from datetime import date
+from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -173,6 +175,7 @@ class Family:
         family_change = []
         global global_text_data
         global global_total_data
+
         for x in range(count):
          
             family_structure = global_text_data.split('|') 
@@ -198,7 +201,7 @@ class Family:
                 family_structure[29] = 'familary-twice'
                 if random.randint(0,3)==2:
                     family_structure[24]=str(fake.random_int(7))
-                    family_structure[23]=str(fake.randdom_int(4))
+                    family_structure[23]=str(fake.random_int(4))
                 family_structure[11]=fake.street_address()
                 if random.randint(0,5)==2:
                     family_structure[12]=fake.secondary_address()
@@ -206,6 +209,7 @@ class Family:
                 family_structure[14]=fake.state_abbr()
                 family_structure[15]=str( fake.zipcode())
                 family_structure[16]=str(fake.random_int(4))
+                family_structure [28] = str(similares.similitudes(family_structure))
 
             if type == 'PARENT_CHILD':
                 genero = fake.random_element(['M', 'F'])
@@ -239,7 +243,7 @@ class Family:
                         nueva_fecha_nacimiento = fecha_nacimiento_original - datetime.timedelta(days=20*365)
                         nueva_fecha_nacimiento_str = nueva_fecha_nacimiento.strftime("%Y-%m-%d")
                         family_structure[9] = nueva_fecha_nacimiento_str
-
+                family_structure [28] = str(similares.similitudes(family_structure))
                 family_structure[29] = 'familary-parent-child'
 
             if type == 'SIBLINGS':
@@ -256,9 +260,13 @@ class Family:
                 family_structure[10]= fake.ssn()
                 
                 if(random.randint(1,5)==3):
-                    family_structure[9]=fake.date_of_birth(minimun_age=18,maximun_age=90).strftime('%Y-%m-%d')
+                    family_structure[9]='1992-12-23'
+                if(random.randint(1,5)==1):
+                    family_structure[9]='1995-10-12'
+                family_structure [28] = str(similares.similitudes(family_structure))
+                
             family_change.append('|'.join(family_structure))
-        
+        similares.similitudes(family_structure)
         return family_change
 
   
@@ -287,7 +295,7 @@ class Family:
             for key in percentages:
                 percentages[key]*=100
             
-            print(percentages, 'olaa')
+            
 
         # Seleccionar y mostrar las estructuras
         if global_count is not None:
@@ -309,15 +317,6 @@ class Family:
             family_structures = Family.generate_family_structures(0, percentages)
         
 
-class similares:
-    @staticmethod
-    def generate_similares_estructure(count, percentages):
-        fake = Faker()
-        family_change = []
-
-
-
-
 class Low_match():
     structure = 'ID|Prefix|FirstName|MiddleName|LastName|Suffix|Name Alias-1|Name Alias-2|Name Alias-3|DOB|SSN|Address-1 Line 1|Address-1 Line 2|Address-1 City|Address-1 State|Address-1 Zip|Address-1 Zip4|Address-2 Line 1|Address-2 Line 2|Address-2 City|Address-2 State|Address-2 Zip|Address-2 Zip4|Phone-1 Area Code|Phone-1 Base Number|Phone-2 Area Code|Phone-2 Base Number|Gender|SimilarityScore|CASE Type'
      # Semilla original
@@ -333,7 +332,7 @@ class Low_match():
 
         for x in range(count):
             Low_match_structure = global_text_data.split('|')
-            seed=Low_match_change
+            seed=Low_match_structure
            
             type = Low_match.select_structure_type(percentages)
             if type == 'NOMATCH_FN_DOB':
@@ -361,7 +360,7 @@ class Low_match():
                 Low_match_structure [26] = str(fake.random_int(7))
                 Low_match_structure [27] = fake.random_element(['F', 'M'])
                 Low_match_structure [29] = 'NOMATCH_FN_DOB'
-
+                Low_match_structure [28] = str(similares.similitudes(Low_match_structure))
 
                 
 
@@ -388,6 +387,7 @@ class Low_match():
                 Low_match_structure [26] = str(fake.random_int(7))
                 Low_match_structure [27] = str(fake.random_element(['F', 'M']))
                 Low_match_structure [29] = 'NOMATCH_LN_DOB'
+                Low_match_structure [28] = str(similares.similitudes(Low_match_structure))
             
             if type == 'NOMATCH_SSN':
                 Low_match_structure [1] = str(fake.prefix()) if random.choice([True,False]) else ''
@@ -414,6 +414,7 @@ class Low_match():
                 Low_match_structure [26] = str(fake.random_int(7))
                 Low_match_structure [27] = fake.random_element(['F', 'M'])
                 Low_match_structure [29] = 'NOMATCH_SSN'
+                Low_match_structure [28] = str(similares.similitudes(Low_match_structure))
             
             if type == 'NOMATCH_DOB_ZIP':
                 Low_match_structure [1] = fake.prefix() if random.choice([True,False]) else ''
@@ -440,7 +441,8 @@ class Low_match():
                 Low_match_structure [27] = fake.random_element(['F', 'M'])
                 Low_match_structure [29] = 'NOMATCH_DOB_ZIP'
     
-                # similares.similitudes(global_text_data,Low_match_structure)
+                Low_match_structure [28] = str(similares.similitudes(Low_match_structure))
+                
 
             Low_match_change.append('|'.join(Low_match_structure))
         
@@ -500,7 +502,7 @@ class similares:
 
             type = similares.select_structure_type(percentages)
             if type == 'SAME':
-                
+                family_structure [28] = str(similares.similitudes(family_structure))
                 family_structure[29]='Same'
                 #similitudes(family_structure)
 
@@ -603,10 +605,8 @@ class similares:
                         word_with_number = word[:random_index] + str(random_digit) + word[random_index + 1:]
                         family_structure[2]=word_with_number
 
-                    # Ejemplo de uso
-                    word = nombre
-                    word_with_number = replace_letter_with_number(word)
-                    family_structure[28]='Typo'
+                    family_structure[29]='Typo'
+                family_structure [28] = str(similares.similitudes(family_structure))
             family_change.append('|'.join(family_structure))
         
         
@@ -652,29 +652,33 @@ class similares:
             global_total_data.append("\n")
         else:
             family_structures = similares.generate_family_structures(0, percentages)
-    # def similitudes(similar_structure, arco_structure):
-    #     ndatos = len(similar_structure) - 2
-    #     for i in range (ndatos):
-    #         if(similar_structure[i]==''):
-    #             similar_structure[i]="0"
-    #         if(arco_structure[i]==''):
-    #             arco_structure[i]="0"
+    def similitudes(arco_structure):
+        similar_structure=global_text_data.split('|')
+        print(similar_structure," ")
+        print(arco_structure," ")
+        total=0
+        for i in range (28):
+            if(similar_structure[i]==''):
+                similar_structure[i]="0"
+            if(arco_structure[i]==''):
+                arco_structure[i]="0"
                     
-    #         seeds = [(similar_structure[i], arco_structure[i])]
+            seeds = [(similar_structure[i], arco_structure[i])]
 
-    #                     # Calculamos las metricas de distancia pasando cada tupla como argumentos a levdist() y get_jaro_distance()
-    #         for x,y in (seeds):
-    #             print(f"'{x}' vs '{y}':")
-    #             print("Distancia Levenshtein ->", edit_distance(x,y))
-    #             print("Similitud Jaro Winkler ->",jwdist.get_jaro_distance(x,y))
-    #             print("-"*40)
-    #             similitud=jwdist.get_jaro_distance(x,y)
-    #             print("la similitud es ",similitud)
-    #             total += similitud
-    #     print("pasada ",i+1)
-    #     total=total/28
-    #     print(total)
-    #     return total
+                        # Calculamos las metricas de distancia pasando cada tupla como argumentos a levdist() y get_jaro_distance()
+            for x,y in (seeds):
+                print(f"'{x}' vs '{y}':")
+                print("Distancia Levenshtein ->", edit_distance(x,y))
+                print("Similitud Jaro Winkler ->",jwdist.get_jaro_distance(x,y))
+                print("-"*40)
+                similitud=jwdist.get_jaro_distance(x,y)
+                print("la similitud es ",similitud)
+                total += similitud
+        print("pasada ",i+1)
+        total=total/28
+        print(total)
+
+        return total
 
 
 
@@ -693,7 +697,8 @@ class createtxt(APIView):
                     f.write(cadena)
                     print('olaaaaaa',cadena)
                     
-                     
+
+            
                     
             file_path = os.path.join(os.getcwd(), 'archivo.txt')
             return FileResponse(open(file_path, 'rb'), as_attachment=True, filename='results.txt')
