@@ -37,10 +37,9 @@ def libreriaarea_code():
    
     }
 
-    # Seleccionar un código de área aleatorio de la lista de claves
+
     random_area_code = random.choice(list(area_codes_states.keys()))
 
-    # Obtener el estado correspondiente al código de área seleccionado
     state = area_codes_states[random_area_code]
 
     return random_area_code, state
@@ -51,11 +50,10 @@ class JSONUploadView(APIView):
         if not uploaded_file:
             return Response({'error': 'No se ha proporcionado ningún archivo'}, status=status.HTTP_400_BAD_REQUEST)
         try:
-            global global_json_data  # Acceder a la variable global
-            # Lee el contenido del archivo JSON
+            global global_json_data  
             global_json_data = json.load(uploaded_file)
            
-            # Aquí puedes realizar cualquier operación con los datos JSON, como procesamiento, análisis, etc.
+
             return Response({'message': 'Archivo JSON subido exitosamente', 'data': global_json_data}, status=status.HTTP_201_CREATED)
         except json.JSONDecodeError:
             return Response({'error': 'El archivo subido no es un archivo JSON válido'}, status=status.HTTP_400_BAD_REQUEST)
@@ -79,7 +77,6 @@ class TextUploadView(APIView):
             for line in text.split('\n'):
                 line = line.strip()
                 if 'SEED' in line:
-                    # Si hay un registro acumulado, agrégalo a la lista de registros
                     if registro_nuevo:
                         registros.append(registro_nuevo)
                     # Comenzar un nuevo registro
@@ -90,8 +87,8 @@ class TextUploadView(APIView):
             global_totalInputs=len(registro_nuevo)+1
             global_total_data.append(registro_nuevo)
             global_total_data.append("\n")
-            # Aquí puedes realizar cualquier operación con los datos de texto
-            
+
+
             
             return Response({'message': 'Archivo TXT subido exitosamente', 'data': global_text_data}, status=status.HTTP_201_CREATED)
         except Exception as e:
@@ -159,6 +156,7 @@ class Generate(APIView):
        
            
         return Response({'message': 'Se recibio correctamente'}, status=status.HTTP_200_OK)
+
 
 
 
@@ -679,8 +677,6 @@ class similares:
         print(total)
 
         return total
-
-
 
 
 
